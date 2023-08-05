@@ -8,7 +8,7 @@ const bcmrURL = ""; // https link
 const bcmrIpfsCID = "" // IPFS CID (baf...)
 
 const seedphase = "";
-const derivationPathAddress = "m/44'/145'/0'/0/0"; // default for cashonize
+const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash 
 
 // start of the program code
 const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";

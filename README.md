@@ -16,7 +16,7 @@ npm install
 then fill in 4 variables at the top of the `authUpdate.js` file.
 `tokenId`, either the `bcmrURL` or the `bcmrIpfsCID`, the `seedphase` and lastly the `derivationPathAddress`.
 
-Be careful with any promgram asking you to fill in your seed phrase!
+Be careful with any program asking you to fill in your seedphrase!
 Verify the source of the program and that is doing what it claims to be doing!
 
 Finally run
