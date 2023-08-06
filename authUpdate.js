@@ -19,7 +19,7 @@ const wallet = await Wallet.fromSeed(seedphase, derivationPathAddress);
 const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
 console.log(`wallet address: ${walletAddress}`);
-console.log(`Bch amount on server is ${balance.bch}bch or ${balance.sat}sats`);
+console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
 
 let authUtxo;
 const utxosWallet = await wallet.getUtxos();
@@ -30,7 +30,7 @@ utxosWallet.forEach(utxo => {
 if(!bcmrURL && !bcmrIpfsCID) throw new Error("provide the BCMR location on https or IPFS");
 if(bcmrURL && bcmrIpfsCID) throw new Error("provide either a https or an IPFS location for the BCMR!");
 if(bcmrIpfsCID & !bcmrIpfsCID.startsWith("baf")) throw new Error("the IPFS CID shold start with baf...");
-if(!authUtxo) {
+if(authUtxo) {
   console.log(authUtxo)
   updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID);
 } else {
