@@ -1,5 +1,5 @@
 import { Wallet, utf8ToBin, sha256, OpReturnData } from "mainnet-js";
-import { queryAuthHead } from "./queryChainGraph";
+import { queryAuthHead } from "./queryChainGraph.js";
 
 // Fill in this variables
 const tokenId = "";
