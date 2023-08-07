@@ -26,6 +26,7 @@ const utxosWallet = await wallet.getUtxos();
 utxosWallet.forEach(utxo => {
   if(utxo.txid == authHeadTxId && utxo.vout == 0) authUtxo = utxo;
 })
+console.log(`The authHead is the first output of the transaction with id ${authHeadTxId}`);
 
 if(!bcmrURL && !bcmrIpfsCID) throw new Error("provide the BCMR location on https or IPFS");
 if(bcmrURL && bcmrIpfsCID) throw new Error("provide either a https or an IPFS location for the BCMR!");
