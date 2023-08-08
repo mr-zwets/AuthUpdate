@@ -47,9 +47,9 @@ async function updateMetadata(autUtxo, bcmrURL, bcmrIpfsCID) {
     const reponse = await fetch(fetchLocation);
     const bcmrContent = await reponse.text();
     const hashContent = sha256.hash(utf8ToBin(bcmrContent));
-    let onchainLocation = "";
+    let onchainLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) "ipfs://"+onchainLocation;
-    if(bcmrURL & bcmrURL.startsWith("https://")) fetchLocation.slice(8);
+    if(onchainLocation.startsWith("https://")) onchainLocation =onchainLocation.slice(8);
     const chunks = ["BCMR", hashContent, onchainLocation];
     let opreturnData = OpReturnData.fromArray(chunks);
 
