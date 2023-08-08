@@ -28,7 +28,6 @@ export async function queryAuthHead(tokenId, chaingraphUrl){
         }
       }
     ) {
-      hash
       authchains {
         authhead {
           hash
@@ -36,5 +35,7 @@ export async function queryAuthHead(tokenId, chaingraphUrl){
       }
     }
   }`;
-  return await queryChainGraph(queryReqAuthHead, chaingraphUrl);
+  const result = await queryChainGraph(queryReqAuthHead, chaingraphUrl);
+  const resultTxId = result.data.transaction[0].authchains[0].authhead.hash;
+  return resultTxId.slice(2);
 }
