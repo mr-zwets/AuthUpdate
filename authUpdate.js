@@ -52,15 +52,30 @@ async function updateMetadata(autUtxo, bcmrURL, bcmrIpfsCID) {
     if(onchainLocation.startsWith("https://")) onchainLocation =onchainLocation.slice(8);
     const chunks = ["BCMR", hashContent, onchainLocation];
     let opreturnData = OpReturnData.fromArray(chunks);
-
-    const { txId } = await wallet.send([
+    const outputs = [
       {
         cashaddr: walletAddress,
         value: 1000,
         unit: 'sats',
       },
       opreturnData
-    ], { ensureUtxos: [autUtxo] });
+    ];
+    // prevents accidental token burning if authhead utxo holds tokens
+    let changeOutput;
+    if(autUtxo.token){
+      changeOutput = amount? new TokenSendRequest({
+        cashaddr: tokenAddr,
+        tokenId: tokenId,
+        amount
+      }) : new TokenSendRequest({
+        cashaddr: tokenAddr,
+        tokenId: tokenId,
+        commitment: autUtxo.token.commitment,
+        capability: autUtxo.token.amount
+      });
+      outputs.push(changeOutput)
+    }
+    const { txId } = await wallet.send(outputs, { ensureUtxos: [autUtxo] });
 
     const displayId = `${authHeadTxId.slice(0, 20)}...${authHeadTxId.slice(-10)}`;
     console.log(`Published Auth update in tx ${displayId}, returned Auth to ${walletAddress} \n$https://explorer.bitcoinunlimited.info/tx/${txId}`);
