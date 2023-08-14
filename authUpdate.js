@@ -42,13 +42,13 @@ if(authUtxo) {
 async function updateMetadata(autUtxo, bcmrURL, bcmrIpfsCID) {
   try {
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
-    if(bcmrIpfsCID) "https://ipfs.io/ipfs/"+fetchLocation;
+    if(bcmrIpfsCID) fetchLocation = "https://ipfs.io/ipfs/"+fetchLocation;
     if(bcmrURL & !bcmrURL.startsWith("https://")) "https://"+fetchLocation;
     const reponse = await fetch(fetchLocation);
     const bcmrContent = await reponse.text();
     const hashContent = sha256.hash(utf8ToBin(bcmrContent));
     let onchainLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
-    if(bcmrIpfsCID) "ipfs://"+onchainLocation;
+    if(bcmrIpfsCID) onchainLocation = "ipfs://"+onchainLocation;
     if(onchainLocation.startsWith("https://")) onchainLocation =onchainLocation.slice(8);
     const chunks = ["BCMR", hashContent, onchainLocation];
     let opreturnData = OpReturnData.fromArray(chunks);
