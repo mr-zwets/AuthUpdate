@@ -20,6 +20,7 @@ const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
 console.log(`wallet address: ${walletAddress}`);
 console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
+if(balance.sat < 1000) throw new Error("Not enough BCH to make the transaction!");
 
 let authUtxo;
 const utxosWallet = await wallet.getUtxos();
@@ -55,7 +56,7 @@ async function updateMetadata(autUtxo, bcmrURL, bcmrIpfsCID) {
     const outputs = [
       {
         cashaddr: walletAddress,
-        value: 1000,
+        value: 600,
         unit: 'sats',
       },
       opreturnData

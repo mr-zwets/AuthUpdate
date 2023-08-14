@@ -4,27 +4,39 @@
 
 ## What it is
 
-A program to import a one-address wallet for creating an OP_RETURN output in the authchain to publish a BCMR metadata update for a token or identity. 
+A program to import a single-address wallet for creating an OP_RETURN output in the authchain to publish a BCMR metadata update for a token or identity. 
 
-## How to use it
-
-Install the npm dependency (mainnet-js) with
-
-```
-npm install
-```
-then fill in 4 variables at the top of the `authUpdate.js` file.
-`tokenId`, either the `bcmrURL` or the `bcmrIpfsCID`, the `seedphase` and lastly the `derivationPathAddress`.
+## Disclaimer
 
 Be careful with any program asking you to fill in your seedphrase!
 Verify the source of the program and that is doing what it claims to be doing!
 
-Finally run
+## How to use it
+
+Before starting, it is expected that you hold the AuthHead in either a dedicated wallet used for no other purpose or a wallet with coin-control to prevent accidental burning.
+
+Clone this repo locally & have Node-js installed to run javascript programs.
+Install the npm dependency (mainnet-js) in the command line with
+
+```
+npm install
+```
+
+Next, fill in the 4 variables at the top of the `authUpdate.js` file
+- the `tokenId` (or authbase)
+- either the `bcmrURL` or the `bcmrIpfsCID`
+- the `seedphase` 
+- the `derivationPathAddress`
+
+For the `derivationPathAddress`: if your authHead is at address index 4 in your Electron Cash, change `m/44'/145'/0'/0/0` to `m/44'/145'/0'/0/4`.
+
+Finally run the program from the command line with
 ```
 node authUpdate.js
 ```
 
 to broadcast the onchain metadata update.
+To use this program you need enough BCH in the single-address wallet to cover the network fees of the transaction.
 
 ## How it works
 
