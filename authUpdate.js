@@ -1,4 +1,4 @@
-import { Wallet, utf8ToBin, sha256, OpReturnData } from "mainnet-js";
+import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 
 // Fill in this variables
@@ -64,12 +64,12 @@ async function updateMetadata(autUtxo, bcmrURL, bcmrIpfsCID) {
     // prevents accidental token burning if authhead utxo holds tokens
     let changeOutput;
     if(autUtxo.token){
-      changeOutput = amount? new TokenSendRequest({
-        cashaddr: tokenAddr,
+      changeOutput = autUtxo.token.amount? new TokenSendRequest({
+        cashaddr: walletAddress,
         tokenId: tokenId,
-        amount
+        amount: autUtxo.token.amount
       }) : new TokenSendRequest({
-        cashaddr: tokenAddr,
+        cashaddr: walletAddress,
         tokenId: tokenId,
         commitment: autUtxo.token.commitment,
         capability: autUtxo.token.amount
