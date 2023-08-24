@@ -1,4 +1,4 @@
-import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest } from "mainnet-js";
+import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 
 // Fill in this variables
@@ -6,7 +6,7 @@ const tokenId = "";
 // bcmrURL or bcmrIpfsCID
 const bcmrURL = ""; // https link 
 const bcmrIpfsCID = "" // IPFS CID (baf...)
-
+const network = "mainnet"; // mainnet or chipnet
 const seedphase = "";
 const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash 
 
@@ -15,7 +15,8 @@ const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";
 const authHeadTxId = await queryAuthHead(tokenId, chaingraphUrl);
 
 // mainnet-js generates m/44'/0'/0'/0/0 by default so have to switch it
-const wallet = await Wallet.fromSeed(seedphase, derivationPathAddress);
+const walletClass = network == "mainnet" ? Wallet : TestNetWallet;
+const wallet = await walletClass.fromSeed(seedphase, derivationPathAddress);
 const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
 console.log(`wallet address: ${walletAddress}`);
@@ -40,7 +41,7 @@ if(authUtxo) {
 }
 
 // Function sending the onchain metadata update transaction
-async function updateMetadata(autUtxo, bcmrURL, bcmrIpfsCID) {
+async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
   try {
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) fetchLocation = "https://ipfs.io/ipfs/"+fetchLocation;
@@ -63,20 +64,20 @@ async function updateMetadata(autUtxo, bcmrURL, bcmrIpfsCID) {
     ];
     // prevents accidental token burning if authhead utxo holds tokens
     let changeOutput;
-    if(autUtxo.token){
-      changeOutput = autUtxo.token.amount? new TokenSendRequest({
+    if(authUtxo.token){
+      changeOutput = authUtxo.token.amount? new TokenSendRequest({
         cashaddr: walletAddress,
         tokenId: tokenId,
-        amount: autUtxo.token.amount
+        amount: authUtxo.token.amount
       }) : new TokenSendRequest({
         cashaddr: walletAddress,
         tokenId: tokenId,
-        commitment: autUtxo.token.commitment,
-        capability: autUtxo.token.amount
+        commitment: authUtxo.token.commitment,
+        capability: authUtxo.token.amount
       });
       outputs.push(changeOutput)
     }
-    const { txId } = await wallet.send(outputs, { ensureUtxos: [autUtxo] });
+    const { txId } = await wallet.send(outputs, { ensureUtxos: [authUtxo] });
 
     const displayId = `${authHeadTxId.slice(0, 20)}...${authHeadTxId.slice(-10)}`;
     console.log(`Published Auth update in tx ${displayId}, returned Auth to ${walletAddress} \n$https://explorer.bitcoinunlimited.info/tx/${txId}`);
