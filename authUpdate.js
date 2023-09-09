@@ -45,7 +45,7 @@ async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
   try {
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) fetchLocation = "https://ipfs.io/ipfs/"+fetchLocation;
-    if(bcmrURL & !bcmrURL.startsWith("https://")) "https://"+fetchLocation;
+    if(bcmrURL && !bcmrURL.startsWith("https://")) fetchLocation = "https://"+fetchLocation;
     const reponse = await fetch(fetchLocation);
     const bcmrContent = await reponse.text();
     const hashContent = sha256.hash(utf8ToBin(bcmrContent));
