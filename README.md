@@ -22,11 +22,12 @@ Install the npm dependency (mainnet-js) in the command line with
 npm install
 ```
 
-Next, fill in the 4 variables at the top of the `authUpdate.js` file
+Next, fill in the 5 variables at the top of the `authUpdate.js` file
 - the `tokenId` (or authbase)
 - either the `bcmrURL` or the `bcmrIpfsCID`
 - the `seedphase` 
 - the `derivationPathAddress`
+- `keepReservedSupply` boolean
 
 For the `derivationPathAddress`: if your authHead is at address index 4 in your Electron Cash, change `m/44'/145'/0'/0/0` to `m/44'/145'/0'/0/4`.
 

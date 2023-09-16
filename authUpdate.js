@@ -8,7 +8,8 @@ const bcmrURL = ""; // https link
 const bcmrIpfsCID = "" // IPFS CID (baf...)
 const network = "mainnet"; // mainnet or chipnet
 const seedphase = "";
-const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash 
+const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash
+const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 
 // start of the program code
 const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";
@@ -43,6 +44,7 @@ if(authUtxo) {
 // Function sending the onchain metadata update transaction
 async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
   try {
+    // Construct opreturn output
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) fetchLocation = "https://ipfs.io/ipfs/"+fetchLocation;
     if(bcmrURL && !bcmrURL.startsWith("https://")) fetchLocation = "https://"+fetchLocation;
@@ -54,18 +56,21 @@ async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
     if(onchainLocation.startsWith("https://")) onchainLocation =onchainLocation.slice(8);
     const chunks = ["BCMR", hashContent, onchainLocation];
     let opreturnData = OpReturnData.fromArray(chunks);
-    const outputs = [
-      {
-        cashaddr: walletAddress,
-        value: 600,
-        unit: 'sats',
-      },
-      opreturnData
-    ];
-    // prevents accidental token burning if authhead utxo holds tokens
-    let changeOutput;
-    if(authUtxo.token){
-      changeOutput = authUtxo.token.amount? new TokenSendRequest({
+    // Construct new AuthHead output
+    let newAuthHead;
+    const bchOnlyOutput = {cashaddr: walletAddress, value: 600, unit: 'sats'}
+    const reservedSupplyOutput = new TokenSendRequest({
+      cashaddr: walletAddress,
+      value: 1000,
+      tokenId: tokenId,
+      amount: authUtxo.token.amount
+    });
+    newAuthHead = keepReservedSupply ? reservedSupplyOutput : bchOnlyOutput;
+    const outputs = [ newAuthHead, opreturnData ];
+    // Adding tokenChangeOutput prevents accidental token burning if authhead utxo holds tokens
+    let tokenChangeOutput;
+    if(authUtxo.token && !keepReservedSupply){
+      tokenChangeOutput = authUtxo.token.amount? new TokenSendRequest({
         cashaddr: walletAddress,
         tokenId: tokenId,
         amount: authUtxo.token.amount
@@ -73,9 +78,9 @@ async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
         cashaddr: walletAddress,
         tokenId: tokenId,
         commitment: authUtxo.token.commitment,
-        capability: authUtxo.token.amount
+        capability: authUtxo.token.capability
       });
-      outputs.push(changeOutput)
+      outputs.push(tokenChangeOutput)
     }
     const { txId } = await wallet.send(outputs, { ensureUtxos: [authUtxo] });
 
