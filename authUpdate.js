@@ -63,7 +63,7 @@ async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
       cashaddr: walletAddress,
       value: 1000,
       tokenId: tokenId,
-      amount: authUtxo.token.amount
+      amount: authUtxo?.token?.amount
     });
     newAuthHead = keepReservedSupply ? reservedSupplyOutput : bchOnlyOutput;
     const outputs = [ newAuthHead, opreturnData ];
