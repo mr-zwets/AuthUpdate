@@ -14,6 +14,7 @@ const authHeadTxId = await queryAuthHead(tokenId, chaingraphUrl);
 const wallet = await Wallet.fromSeed(seedphase, derivationPathAddress);
 const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
+if(typeof balance == "number" || !balance?.sat) throw new Error("Error in getBalance")
 console.log(`wallet address: ${walletAddress}`);
 console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
 if(balance.sat < 1000) throw new Error("Not enough BCH to make the transaction!");

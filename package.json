@@ -2,15 +2,18 @@
   "name": "authupdate",
   "version": "1.0.0",
   "description": "",
-  "main": "authUpdate.js",
+  "main": "",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "authUpdate": "tsx authUpdate.ts",
+    "reservedSupply": "tsx reservedSupply.ts",
+    "issueSuppy": "tsx issueSuppy.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mainnet-js": "^1.1.32"
+    "mainnet-js": "^2.5.0",
+    "tsx": "^4.19.1"
   }
 }

@@ -19,7 +19,7 @@ async function queryChainGraph(queryReq, chaingraphUrl){
     return await response.json();
 }
 
-export async function queryAuthHead(tokenId, chaingraphUrl){
+export async function queryAuthHead(tokenId:string, chaingraphUrl:string){
   const queryReqAuthHead = `query {
     transaction(
       where: {

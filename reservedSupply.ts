@@ -18,6 +18,7 @@ const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
 const tokenBalance = await wallet.getTokenBalance(tokenId);
 console.log(`wallet address: ${walletAddress}`);
+if(typeof balance == "number" || !balance?.sat) throw new Error("Error in getBalance")
 console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
 if(balance.sat < 1000) throw new Error("Not enough BCH to make the transaction!");
 console.log(`Balance of configured token is ${tokenBalance}`);

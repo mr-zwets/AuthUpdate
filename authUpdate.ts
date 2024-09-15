@@ -5,7 +5,7 @@ import { queryAuthHead } from "./queryChainGraph.js";
 const tokenId = "";
 // bcmrURL or bcmrIpfsCID
 const bcmrURL = ""; // https link 
-const bcmrIpfsCID = "" // IPFS CID (baf...)
+const bcmrIpfsCID: string = "" // IPFS CID (baf...)
 const network = "mainnet"; // mainnet or chipnet
 const seedphase = "";
 const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash
@@ -20,6 +20,7 @@ const walletClass = network == "mainnet" ? Wallet : TestNetWallet;
 const wallet = await walletClass.fromSeed(seedphase, derivationPathAddress);
 const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
+if(typeof balance == "number" || !balance?.sat) throw new Error("Error in getBalance")
 console.log(`wallet address: ${walletAddress}`);
 console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
 if(balance.sat < 1000) throw new Error("Not enough BCH to make the transaction!");
@@ -33,7 +34,7 @@ console.log(`The authHead is the first output of the transaction with id ${authH
 
 if(!bcmrURL && !bcmrIpfsCID) throw new Error("provide the BCMR location on https or IPFS");
 if(bcmrURL && bcmrIpfsCID) throw new Error("provide either a https or an IPFS location for the BCMR!");
-if(bcmrIpfsCID & !bcmrIpfsCID.startsWith("baf")) throw new Error("the IPFS CID shold start with baf...");
+if(bcmrIpfsCID && !bcmrIpfsCID.startsWith("baf")) throw new Error("the IPFS CID shold start with baf...");
 if(authUtxo) {
   console.log(authUtxo)
   updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID);
