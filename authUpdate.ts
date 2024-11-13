@@ -1,4 +1,4 @@
-import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet } from "mainnet-js";
+import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 
 // Fill in this variables
@@ -12,6 +12,8 @@ const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address
 const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 
 // start of the program code
+const ipfsGateway = "https://w3s.link/ipfs/"
+const blockexplorer = "https://explorer.electroncash.de/tx/"
 const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";
 const authHeadTxId = await queryAuthHead(tokenId, chaingraphUrl);
 
@@ -47,11 +49,12 @@ async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
   try {
     // Construct opreturn output
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
-    if(bcmrIpfsCID) fetchLocation = "https://ipfs.io/ipfs/"+fetchLocation;
+    if(bcmrIpfsCID) fetchLocation = ipfsGateway + fetchLocation;
     if(bcmrURL && !bcmrURL.startsWith("https://")) fetchLocation = "https://"+fetchLocation;
     const reponse = await fetch(fetchLocation);
     const bcmrContent = await reponse.text();
     const hashContent = sha256.hash(utf8ToBin(bcmrContent));
+    console.log("content hash: " + binToHex(hashContent))
     let onchainLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) onchainLocation = "ipfs://"+onchainLocation;
     if(onchainLocation.startsWith("https://")) onchainLocation =onchainLocation.slice(8);
@@ -86,7 +89,7 @@ async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
     const { txId } = await wallet.send(outputs, { ensureUtxos: [authUtxo] });
 
     const displayId = `${authHeadTxId.slice(0, 20)}...${authHeadTxId.slice(-10)}`;
-    console.log(`Published Auth update in tx ${displayId}, returned Auth to ${walletAddress} \n$https://explorer.bitcoinunlimited.info/tx/${txId}`);
+    console.log(`Published Auth update in tx ${displayId}, returned Auth to ${walletAddress} \n${blockexplorer + txId}`);
   } catch (error) {
     console.log(error);
   }
