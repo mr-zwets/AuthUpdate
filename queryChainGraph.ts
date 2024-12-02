@@ -1,30 +1,16 @@
-async function queryChainGraph(queryReq, chaingraphUrl){
-    const jsonObj = {
-        "operationName": null,
-        "variables": {},
-        "query": queryReq
-    };
-    const response = await fetch(chaingraphUrl, {
-        method: "POST",
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "same-origin", // include, *same-origin, omit
-        headers: {
-            "Content-Type": "application/json",
-        },
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(jsonObj), // body data type must match "Content-Type" header
-    });
-    return await response.json();
-}
+import { graphql, ChaingraphClient } from "chaingraph-ts";
 
-export async function queryAuthHead(tokenId:string, chaingraphUrl:string){
-  const queryReqAuthHead = `query {
+const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";
+const chaingraphClient = new ChaingraphClient(chaingraphUrl);
+
+export async function queryAuthHead(tokenId:string){
+  const queryReqAuthHead = graphql(`query authHead(
+    $tokenId: bytea!
+  ){
     transaction(
       where: {
         hash: {
-          _eq: "\\\\x${tokenId}"
+          _eq: $tokenId
         }
       }
     ) {
@@ -34,8 +20,10 @@ export async function queryAuthHead(tokenId:string, chaingraphUrl:string){
         }
       }
     }
-  }`;
-  const result = await queryChainGraph(queryReqAuthHead, chaingraphUrl);
-  const resultTxId = result.data.transaction[0].authchains[0].authhead.hash;
+  }`);
+  const result = await chaingraphClient.query(queryReqAuthHead, {tokenId: `\\x${tokenId}`});
+  if(!result.data) throw new Error("No data returned from chaingraph");
+  const resultTxId = result.data?.transaction[0].authchains[0].authhead?.hash;
+  if(!resultTxId) throw new Error("No TxId returned from chaingraph");
   return resultTxId.slice(2);
 }

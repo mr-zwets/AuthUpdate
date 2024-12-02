@@ -14,8 +14,7 @@ const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 // start of the program code
 const ipfsGateway = "https://w3s.link/ipfs/"
 const blockexplorer = "https://explorer.electroncash.de/tx/"
-const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";
-const authHeadTxId = await queryAuthHead(tokenId, chaingraphUrl);
+const authHeadTxId = await queryAuthHead(tokenId);
 
 // mainnet-js generates m/44'/0'/0'/0/0 by default so have to switch it
 const walletClass = network == "mainnet" ? Wallet : TestNetWallet;

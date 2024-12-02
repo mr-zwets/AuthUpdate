@@ -8,8 +8,7 @@ const destinationAddress = ""
 const issueAmount = 100_000_000
 
 // start of the program code
-const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";
-const authHeadTxId = await queryAuthHead(tokenId, chaingraphUrl);
+const authHeadTxId = await queryAuthHead(tokenId);
 
 const wallet = await Wallet.fromSeed(seedphase, derivationPathAddress);
 const walletAddress = wallet.getDepositAddress();

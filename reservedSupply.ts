@@ -8,8 +8,7 @@ const seedphase = "";
 const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash
 
 // start of the program code
-const chaingraphUrl = "https://demo.chaingraph.cash/v1/graphql";
-const authHeadTxId = await queryAuthHead(tokenId, chaingraphUrl);
+const authHeadTxId = await queryAuthHead(tokenId);
 
 // mainnet-js generates m/44'/0'/0'/0/0 by default so have to switch it
 const walletClass = network == "mainnet" ? Wallet : TestNetWallet;
