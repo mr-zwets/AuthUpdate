@@ -4,7 +4,9 @@
 
 ## What it is
 
-A program to import a single-address wallet for creating an OP_RETURN output in the authchain to publish a BCMR metadata update for a token or identity. 
+A program to import a single-address wallet for creating an OP_RETURN output in the authchain to publish a BCMR metadata update for a token or identity.
+
+Also includes helper programs for adding or removing fungible tokens from the authchain reserved supply.
 
 ## Disclaimer
 
@@ -18,7 +20,7 @@ Before starting, it is expected that you hold the AuthHead in either a dedicated
 Clone this repo locally & have Node-js installed to run javascript programs.
 Install the npm dependency (mainnet-js) in the command line with
 
-```
+```bash
 npm install
 ```
 
@@ -32,8 +34,8 @@ Next, fill in the 5 variables at the top of the `authUpdate.js` file
 For the `derivationPathAddress`: if your authHead is at address index 4 in your Electron Cash, change `m/44'/145'/0'/0/0` to `m/44'/145'/0'/0/4`.
 
 Finally run the program from the command line with
-```
-node authUpdate.js
+```bash
+npm run authUpdate
 ```
 
 to broadcast the onchain metadata update.
@@ -44,4 +46,16 @@ To use this program you need enough BCH in the single-address wallet to cover th
 The program imports a one-address wallet from the provided seedphrase and creates a transaction to publish an on-chain BCMR update in the authchain. More specifically, it sends the authhead back to the same address and has an OP_RETURN as second output to put data for the BCMR update on-chain according to the BCMR spec:
 ```
 OP_RETURN <'BCMR'> <hash> <uri>
+```
+
+## Other helper programs
+
+There is also a helper program to issue fungible token supply from an an authchain:
+```bash
+npm run issueSuppy
+```
+
+There is also a helper program to add fungible token supply to the reserved supply:
+```bash
+npm run reservedSupply
 ```
