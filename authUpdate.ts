@@ -1,14 +1,23 @@
 import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex, type UtxoI } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
+// import { readFileSync } from "fs";
+// const bcmrJsonFile = readFileSync("bitcoin-cash-metadata-registry.json", "utf8");
+// let bcmrJsonString = bcmrJsonFile;
+
+// note: when disabling 'fetchJsonFromUrl' uncomment the 3 lines above and comment out the line below
+let bcmrJsonString: undefined | string
 
 // Fill in these config variables
 
 const tokenId = "";
+// general config
+const network = "mainnet"; // mainnet or chipnet
+const fetchJsonFromUrl = true; // fetch the BCMR from https or IPFS
+const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 // bcmrURL or bcmrIpfsCID
+// note: when using 'fetchJsonFromUrl' this will be fetched and used as bcmrJsonString
 const bcmrURL = ""; // https link 
 const bcmrIpfsCID: string = "" // IPFS CID (baf...)
-const network = "mainnet"; // mainnet or chipnet
-const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 // wif or seedphase + derivationPathAddress
 const wif = "";
 const seedphase = "";
@@ -57,18 +66,31 @@ async function updateMetadata(
   authUtxo: UtxoI, bcmrURL: string, bcmrIpfsCID: string
 ) {
   if(!wallet) throw new Error("Error creating wallet from wif or seedphrase");
-  try {
-    // Construct opreturn output
+
+  // Fetch the BCMR from https or IPFS if configured so
+  if(fetchJsonFromUrl){
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) fetchLocation = ipfsGateway + fetchLocation;
     if(bcmrURL && !bcmrURL.startsWith("https://")) fetchLocation = "https://"+fetchLocation;
-    const reponse = await fetch(fetchLocation);
-    const bcmrContent = await reponse.text();
-    const hashContent = sha256.hash(utf8ToBin(bcmrContent));
+    if(!bcmrURL.includes("/")) fetchLocation += "/.well-known/bitcoin-cash-metadata-registry.json";
+    try {
+      console.log("fetching the BCMR from "+fetchLocation)
+      const response = await fetch(fetchLocation);
+      bcmrJsonString = await response.text();
+    } catch (error) {
+      throw new Error("Error fetching the BCMR from "+fetchLocation);
+    }
+  }
+  if(!bcmrJsonString) throw new Error("No bcmrJsonString available");
+
+  try {
+    // Construct opreturn output
+    const hashContent = sha256.hash(utf8ToBin(bcmrJsonString));
     console.log("content hash: " + binToHex(hashContent))
     let onchainLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) onchainLocation = "ipfs://"+onchainLocation;
     if(onchainLocation.startsWith("https://")) onchainLocation =onchainLocation.slice(8);
+    console.log("onchain location: " + onchainLocation)
     const chunks = ["BCMR", hashContent, onchainLocation];
     let opreturnData = OpReturnData.fromArray(chunks);
     // Construct new AuthHead output

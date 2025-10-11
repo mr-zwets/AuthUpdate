@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@types/node':
+        specifier: ^24.7.1
+        version: 24.7.1
       chaingraph-ts:
         specifier: ^0.2.4
         version: 0.2.4(typescript@5.9.3)
