@@ -1,24 +1,33 @@
 import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex, type UtxoI } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 
-// Fill in this variables
+// Fill in these config variables
+
 const tokenId = "";
 // bcmrURL or bcmrIpfsCID
 const bcmrURL = ""; // https link 
 const bcmrIpfsCID: string = "" // IPFS CID (baf...)
 const network = "mainnet"; // mainnet or chipnet
+const keepReservedSupply = false; // keeps fungible tokens on AuthHead
+// wif or seedphase + derivationPathAddress
+const wif = "";
 const seedphase = "";
 const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash
-const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 
 // start of the program code
 const ipfsGateway = "https://w3s.link/ipfs/"
 const blockexplorer = "https://explorer.electroncash.de/tx/"
 const authHeadTxId = await queryAuthHead(tokenId);
 
-// mainnet-js generates m/44'/0'/0'/0/0 by default so have to switch it
 const walletClass = network == "mainnet" ? Wallet : TestNetWallet;
-const wallet = await walletClass.fromSeed(seedphase, derivationPathAddress);
+if(!wif && !seedphase) throw new Error("provide either a wif or a seedphrase + derivationPathAddress");
+let wallet: Wallet | undefined;
+if(wif) {
+  wallet = await walletClass.fromWIF(wif);
+} else {
+  // mainnet-js uses m/44'/0'/0'/0/0 by default so have to overwrite it
+  wallet = await walletClass.fromSeed(seedphase, derivationPathAddress);
+}
 const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
 if(typeof balance == "number" || !balance?.sat) throw new Error("Error in getBalance")
@@ -47,6 +56,7 @@ if(authUtxo) {
 async function updateMetadata(
   authUtxo: UtxoI, bcmrURL: string, bcmrIpfsCID: string
 ) {
+  if(!wallet) throw new Error("Error creating wallet from wif or seedphrase");
   try {
     // Construct opreturn output
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
