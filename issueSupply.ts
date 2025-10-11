@@ -1,11 +1,11 @@
-import { Wallet, TokenSendRequest } from "mainnet-js";
+import { Wallet, TokenSendRequest, type UtxoI } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 
 const seedphase = "";
 const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash
 const tokenId = ""
 const destinationAddress = ""
-const issueAmount = 100_000_000
+const issueAmount = 100_000_000n
 
 // start of the program code
 const authHeadTxId = await queryAuthHead(tokenId);
@@ -18,12 +18,14 @@ console.log(`wallet address: ${walletAddress}`);
 console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
 if(balance.sat < 1000) throw new Error("Not enough BCH to make the transaction!");
 
-let authUtxo;
+let authUtxo: UtxoI | undefined;
 const utxosWallet = await wallet.getUtxos();
 utxosWallet.forEach(utxo => {
   if(utxo.txid == authHeadTxId && utxo.vout == 0) authUtxo = utxo;
 })
 console.log(`The authHead is the first output of the transaction with id ${authHeadTxId}`);
+if(!authUtxo) throw new Error("wallet does not hold the authUtxo");
+if(!authUtxo?.token?.amount) throw new Error("wallet does not hold the authUtxo");
 
 const newReservedSupply = authUtxo?.token?.amount - issueAmount;
 

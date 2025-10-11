@@ -1,4 +1,4 @@
-import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex } from "mainnet-js";
+import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex, type UtxoI } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 
 // Fill in this variables
@@ -44,7 +44,9 @@ if(authUtxo) {
 }
 
 // Function sending the onchain metadata update transaction
-async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
+async function updateMetadata(
+  authUtxo: UtxoI, bcmrURL: string, bcmrIpfsCID: string
+) {
   try {
     // Construct opreturn output
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
@@ -61,7 +63,7 @@ async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
     let opreturnData = OpReturnData.fromArray(chunks);
     // Construct new AuthHead output
     let newAuthHead;
-    const bchOnlyOutput = {cashaddr: walletAddress, value: 600, unit: 'sats'}
+    const bchOnlyOutput = {cashaddr: walletAddress, value: 600, unit: 'sats'} as const
     const reservedSupplyOutput = new TokenSendRequest({
       cashaddr: walletAddress,
       value: 1000,
