@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "chaingraph-ts": "^0.2.4",
-    "mainnet-js": "^2.7.0",
-    "tsx": "^4.20.3"
+    "mainnet-js": "^2.7.19",
+    "tsx": "^4.20.6"
   }
 }
