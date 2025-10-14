@@ -1,24 +1,42 @@
-import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex } from "mainnet-js";
+import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex, type UtxoI } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
+// import { readFileSync } from "fs";
+// const bcmrJsonFile = readFileSync("bitcoin-cash-metadata-registry.json", "utf8");
+// let bcmrJsonString = bcmrJsonFile;
 
-// Fill in this variables
+// note: when disabling 'fetchJsonFromUrl' uncomment the 3 lines above and comment out the line below
+let bcmrJsonString: undefined | string
+
+// Fill in these config variables
+
 const tokenId = "";
+// general config
+const network = "mainnet"; // mainnet or chipnet
+const fetchJsonFromUrl = true; // fetch the BCMR from https or IPFS
+const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 // bcmrURL or bcmrIpfsCID
+// note: when using 'fetchJsonFromUrl' this will be fetched and used as bcmrJsonString
 const bcmrURL = ""; // https link 
 const bcmrIpfsCID: string = "" // IPFS CID (baf...)
-const network = "mainnet"; // mainnet or chipnet
+// wif or seedphase + derivationPathAddress
+const wif = "";
 const seedphase = "";
 const derivationPathAddress = "m/44'/145'/0'/0/0"; // last number is the address index from electron cash
-const keepReservedSupply = false; // keeps fungible tokens on AuthHead
 
 // start of the program code
 const ipfsGateway = "https://w3s.link/ipfs/"
 const blockexplorer = "https://explorer.electroncash.de/tx/"
 const authHeadTxId = await queryAuthHead(tokenId);
 
-// mainnet-js generates m/44'/0'/0'/0/0 by default so have to switch it
 const walletClass = network == "mainnet" ? Wallet : TestNetWallet;
-const wallet = await walletClass.fromSeed(seedphase, derivationPathAddress);
+if(!wif && !seedphase) throw new Error("provide either a wif or a seedphrase + derivationPathAddress");
+let wallet: Wallet | undefined;
+if(wif) {
+  wallet = await walletClass.fromWIF(wif);
+} else {
+  // mainnet-js uses m/44'/0'/0'/0/0 by default so have to overwrite it
+  wallet = await walletClass.fromSeed(seedphase, derivationPathAddress);
+}
 const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
 if(typeof balance == "number" || !balance?.sat) throw new Error("Error in getBalance")
@@ -44,24 +62,40 @@ if(authUtxo) {
 }
 
 // Function sending the onchain metadata update transaction
-async function updateMetadata(authUtxo, bcmrURL, bcmrIpfsCID) {
-  try {
-    // Construct opreturn output
+async function updateMetadata(
+  authUtxo: UtxoI, bcmrURL: string, bcmrIpfsCID: string
+) {
+  if(!wallet) throw new Error("Error creating wallet from wif or seedphrase");
+
+  // Fetch the BCMR from https or IPFS if configured so
+  if(fetchJsonFromUrl){
     let fetchLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) fetchLocation = ipfsGateway + fetchLocation;
     if(bcmrURL && !bcmrURL.startsWith("https://")) fetchLocation = "https://"+fetchLocation;
-    const reponse = await fetch(fetchLocation);
-    const bcmrContent = await reponse.text();
-    const hashContent = sha256.hash(utf8ToBin(bcmrContent));
+    if(!bcmrURL.includes("/")) fetchLocation += "/.well-known/bitcoin-cash-metadata-registry.json";
+    try {
+      console.log("fetching the BCMR from "+fetchLocation)
+      const response = await fetch(fetchLocation);
+      bcmrJsonString = await response.text();
+    } catch (error) {
+      throw new Error("Error fetching the BCMR from "+fetchLocation);
+    }
+  }
+  if(!bcmrJsonString) throw new Error("No bcmrJsonString available");
+
+  try {
+    // Construct opreturn output
+    const hashContent = sha256.hash(utf8ToBin(bcmrJsonString));
     console.log("content hash: " + binToHex(hashContent))
     let onchainLocation = bcmrURL? bcmrURL : bcmrIpfsCID;
     if(bcmrIpfsCID) onchainLocation = "ipfs://"+onchainLocation;
     if(onchainLocation.startsWith("https://")) onchainLocation =onchainLocation.slice(8);
+    console.log("onchain location: " + onchainLocation)
     const chunks = ["BCMR", hashContent, onchainLocation];
     let opreturnData = OpReturnData.fromArray(chunks);
     // Construct new AuthHead output
     let newAuthHead;
-    const bchOnlyOutput = {cashaddr: walletAddress, value: 600, unit: 'sats'}
+    const bchOnlyOutput = {cashaddr: walletAddress, value: 600, unit: 'sats'} as const
     const reservedSupplyOutput = new TokenSendRequest({
       cashaddr: walletAddress,
       value: 1000,
