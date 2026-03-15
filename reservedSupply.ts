@@ -1,4 +1,4 @@
-import { Wallet, TokenSendRequest, TestNetWallet, type UtxoI } from "mainnet-js";
+import { Wallet, TokenSendRequest, TestNetWallet, toBch, type Utxo } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 
 // Fill in this variables
@@ -17,12 +17,11 @@ const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
 const tokenBalance = await wallet.getTokenBalance(tokenId);
 console.log(`wallet address: ${walletAddress}`);
-if(typeof balance == "number" || !balance?.sat) throw new Error("Error in getBalance")
-console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
-if(balance.sat < 1000) throw new Error("Not enough BCH to make the transaction!");
+console.log(`Bch amount in walletAddress is ${toBch(balance)}bch or ${balance}sats`);
+if(balance < 1000n) throw new Error("Not enough BCH to make the transaction!");
 console.log(`Balance of configured token is ${tokenBalance}`);
 
-let authUtxo: UtxoI | undefined;
+let authUtxo: Utxo | undefined;
 const utxosWallet = await wallet.getUtxos();
 utxosWallet.forEach(utxo => {
   if(utxo.txid == authHeadTxId && utxo.vout == 0) authUtxo = utxo;
@@ -39,14 +38,14 @@ if(authUtxo) {
 
 // Function to add all tokens with configure tokenId on the single address wallet to the authHead
 async function addAllToReserves(
-  authUtxo: UtxoI, newReservedSupply: bigint
+  authUtxo: Utxo, newReservedSupply: bigint
 ) {
   try {
     // Construct new reservedSupply output
     const reservedSupplyOutput = new TokenSendRequest({
       cashaddr: walletAddress,
-      value: 1000,
-      tokenId: tokenId,
+      value: 1000n,
+      category: tokenId,
       amount: newReservedSupply
     });
     const outputs = [ reservedSupplyOutput ];

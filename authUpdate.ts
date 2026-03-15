@@ -1,4 +1,4 @@
-import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex, type UtxoI } from "mainnet-js";
+import { Wallet, utf8ToBin, sha256, OpReturnData, TokenSendRequest, TestNetWallet, binToHex, toBch, type Utxo } from "mainnet-js";
 import { queryAuthHead } from "./queryChainGraph.js";
 // import { readFileSync } from "fs";
 // const bcmrJsonFile = readFileSync("bitcoin-cash-metadata-registry.json", "utf8");
@@ -39,10 +39,9 @@ if(wif) {
 }
 const walletAddress = wallet.getDepositAddress();
 const balance = await wallet.getBalance();
-if(typeof balance == "number" || !balance?.sat) throw new Error("Error in getBalance")
 console.log(`wallet address: ${walletAddress}`);
-console.log(`Bch amount in walletAddress is ${balance.bch}bch or ${balance.sat}sats`);
-if(balance.sat < 1000) throw new Error("Not enough BCH to make the transaction!");
+console.log(`Bch amount in walletAddress is ${toBch(balance)}bch or ${balance}sats`);
+if(balance < 1000n) throw new Error("Not enough BCH to make the transaction!");
 
 let authUtxo;
 const utxosWallet = await wallet.getUtxos();
@@ -63,7 +62,7 @@ if(authUtxo) {
 
 // Function sending the onchain metadata update transaction
 async function updateMetadata(
-  authUtxo: UtxoI, bcmrURL: string, bcmrIpfsCID: string
+  authUtxo: Utxo, bcmrURL: string, bcmrIpfsCID: string
 ) {
   if(!wallet) throw new Error("Error creating wallet from wif or seedphrase");
 
@@ -95,11 +94,11 @@ async function updateMetadata(
     let opreturnData = OpReturnData.fromArray(chunks);
     // Construct new AuthHead output
     let newAuthHead;
-    const bchOnlyOutput = {cashaddr: walletAddress, value: 600, unit: 'sats'} as const
+    const bchOnlyOutput = {cashaddr: walletAddress, value: 600n}
     const reservedSupplyOutput = new TokenSendRequest({
       cashaddr: walletAddress,
-      value: 1000,
-      tokenId: tokenId,
+      value: 1000n,
+      category: tokenId,
       amount: authUtxo?.token?.amount
     });
     newAuthHead = keepReservedSupply ? reservedSupplyOutput : bchOnlyOutput;
@@ -109,13 +108,15 @@ async function updateMetadata(
     if(authUtxo.token && !keepReservedSupply){
       tokenChangeOutput = authUtxo.token.amount? new TokenSendRequest({
         cashaddr: walletAddress,
-        tokenId: tokenId,
+        category: tokenId,
         amount: authUtxo.token.amount
       }) : new TokenSendRequest({
         cashaddr: walletAddress,
-        tokenId: tokenId,
-        commitment: authUtxo.token.commitment,
-        capability: authUtxo.token.capability
+        category: tokenId,
+        nft: {
+          commitment: authUtxo.token.nft?.commitment,
+          capability: authUtxo.token.nft?.capability
+        }
       });
       outputs.push(tokenChangeOutput)
     }

@@ -15,7 +15,7 @@
   "dependencies": {
     "@types/node": "^24.7.1",
     "chaingraph-ts": "^0.2.4",
-    "mainnet-js": "^2.7.19",
+    "mainnet-js": "^3.1.7",
     "tsx": "^4.20.6"
   }
 }

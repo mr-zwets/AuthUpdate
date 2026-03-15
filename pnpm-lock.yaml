@@ -15,8 +15,8 @@ importers:
         specifier: ^0.2.4
         version: 0.2.4(typescript@5.9.3)
       mainnet-js:
-        specifier: ^2.7.19
-        version: 2.7.19
+        specifier: ^3.1.7
+        version: 3.1.7
       tsx:
         specifier: ^4.20.6
         version: 4.20.6
@@ -37,11 +37,6 @@ packages:
       graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
       typescript: ^5.0.0
 
-  '@bch-wc2/interfaces@0.0.8':
-    resolution: {integrity: sha512-gRt95azHVqoViGI4X3F1ObgTpYBh3//KaCHRBWSMJbAKNM09T+TA/h9kx9u9SZmE8otMtpFSy4awSHWHUQZmbg==}
-    peerDependencies:
-      '@bitauth/libauth': ^3.1.0-next.2
-
   '@bitauth/libauth@3.0.0':
     resolution: {integrity: sha512-3yoL31XpnhAnf5nDVMFk4xPqebxDwXrgYAwpa31ARJnV5A/eXWlpNYvCd6FTZPFM4VvKfjCBi+jRCrw1hOZ0Jg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -53,11 +48,11 @@ packages:
   '@electrum-cash/debug-logs@1.0.0':
     resolution: {integrity: sha512-GU/CvRR9lZ0d8gy9CXGW7f//OHCIydBavv9q+JcxjGj8Xr7HwlGqHx+Wzhx9y3YmJrXfExpgClcd++gTjdEmzA==}
 
-  '@electrum-cash/network@4.1.4':
-    resolution: {integrity: sha512-nHC/HTo26JGghVunXMlc2lh2p6gwUDjs8umGvEE4we+G0Hyv7xaO+WVYqKrGcr5huBnUX9wakVBIJmbtigzi4Q==}
+  '@electrum-cash/network@4.2.2':
+    resolution: {integrity: sha512-v2Wwt2o0VBBALPArx2dJEDvSqewKjiTW5KAd+jEXxxgdSxFygjJIrFcXryKOCv2CDbpE5+lXAogPAjx6FqW/nw==}
 
-  '@electrum-cash/web-socket@1.0.0':
-    resolution: {integrity: sha512-+VQ6aPE7nUysyDn9SB7/uqKuVJmjrhvr0LRK2ANTeR1DfmXBnv5z29e/0zK5A7ZoAz0gdZZuLDzN46r8S5Cxig==}
+  '@electrum-cash/web-socket@1.2.3':
+    resolution: {integrity: sha512-sFWujTt98mvsMvE6gWjG44evkF3PcZhG1JffkkEUAVan+c9X51wkiWr3hkjPeIW0WfNpMTrFkvpGqVYmRj1RCA==}
 
   '@esbuild/aix-ppc64@0.25.10':
     resolution: {integrity: sha512-0NFWnA+7l41irNuaSVlLfgNT12caWJVLzp5eAVhZ0z1qpxbockccEt3s+149rE64VUI3Ml2zt8Nv5JVc4QXTsw==}
@@ -240,16 +235,6 @@ packages:
     peerDependencies:
       ws: '*'
 
-  '@noble/hashes@1.8.0':
-    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
-    engines: {node: ^14.21.3 || >=16}
-
-  '@scure/base@1.2.6':
-    resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
-
-  '@scure/bip39@1.6.0':
-    resolution: {integrity: sha512-+lF0BbLiJNwVlev4eKelw1WWLaiKXw7sSl8T6FvBlWkdX+94aGJ4o8XjUdlyhTCjd8c+B3KT3JfS8P0bLRNU6A==}
-
   '@types/node@24.7.1':
     resolution: {integrity: sha512-CmyhGZanP88uuC5GpWU9q+fI61j2SkhO3UGMUdfYRE6Bcy0ccyzn1Rqj9YAB/ZY4kOXmNf0ocah5GtphmLMP6Q==}
 
@@ -261,12 +246,6 @@ packages:
 
   async-mutex@0.5.0:
     resolution: {integrity: sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA==}
-
-  base64-js@1.5.1:
-    resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
-
-  buffer@6.0.3:
-    resolution: {integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==}
 
   chaingraph-ts@0.2.4:
     resolution: {integrity: sha512-7DVa0kS6b2o5yiO/pNmCBBaVCOytzs0TWAbGpsGO+d+pzd5ILDK2QhhiWeWacfzXph+OG567vBUVjWxpo5eLQQ==}
@@ -329,14 +308,11 @@ packages:
     resolution: {integrity: sha512-mS1lbMsxgQj6hge1XZ6p7GPhbrtFwUFYi3wRzXAC/FmYnyXMTvvI3td3rjmQ2u8ewXueaSvRPWaEcgVVOT9Jnw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
-  ieee754@1.2.1:
-    resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
-
   lossless-json@4.3.0:
     resolution: {integrity: sha512-ToxOC+SsduRmdSuoLZLYAr5zy1Qu7l5XhmPWM3zefCZ5IcrzW/h108qbJUKfOlDlhvhjUK84+8PSVX0kxnit0g==}
 
-  mainnet-js@2.7.19:
-    resolution: {integrity: sha512-Mr6KAKmvmI5RFOeBqhfBI/uEt1bqzVtoHlBXBc/kt6lBnHFZfxlWuKEccs5anvbB4Wd5Sf+mdInJJTjMxwzqDw==}
+  mainnet-js@3.1.7:
+    resolution: {integrity: sha512-rOBN+qVON7Lhh2jrMwIA26xv23dAFULMR+DT+g9al9GnmNSdsUL2RuN50eWwkUxE2T4YFdTWT30FUKZczl8hRw==}
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -387,10 +363,6 @@ snapshots:
       graphql: 16.11.0
       typescript: 5.9.3
 
-  '@bch-wc2/interfaces@0.0.8(@bitauth/libauth@3.1.0-next.8)':
-    dependencies:
-      '@bitauth/libauth': 3.1.0-next.8
-
   '@bitauth/libauth@3.0.0': {}
 
   '@bitauth/libauth@3.1.0-next.8': {}
@@ -401,10 +373,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@electrum-cash/network@4.1.4':
+  '@electrum-cash/network@4.2.2':
     dependencies:
       '@electrum-cash/debug-logs': 1.0.0
-      '@electrum-cash/web-socket': 1.0.0
+      '@electrum-cash/web-socket': 1.2.3
       async-mutex: 0.5.0
       debug: 4.4.3
       eventemitter3: 5.0.1
@@ -414,7 +386,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@electrum-cash/web-socket@1.0.0':
+  '@electrum-cash/web-socket@1.2.3':
     dependencies:
       '@electrum-cash/debug-logs': 1.0.0
       '@monsterbitar/isomorphic-ws': 5.3.1(ws@8.18.3)
@@ -523,15 +495,6 @@ snapshots:
     dependencies:
       ws: 8.18.3
 
-  '@noble/hashes@1.8.0': {}
-
-  '@scure/base@1.2.6': {}
-
-  '@scure/bip39@1.6.0':
-    dependencies:
-      '@noble/hashes': 1.8.0
-      '@scure/base': 1.2.6
-
   '@types/node@24.7.1':
     dependencies:
       undici-types: 7.14.0
@@ -550,13 +513,6 @@ snapshots:
   async-mutex@0.5.0:
     dependencies:
       tslib: 2.8.1
-
-  base64-js@1.5.1: {}
-
-  buffer@6.0.3:
-    dependencies:
-      base64-js: 1.5.1
-      ieee754: 1.2.1
 
   chaingraph-ts@0.2.4(typescript@5.9.3):
     dependencies:
@@ -641,17 +597,12 @@ snapshots:
 
   graphql@16.11.0: {}
 
-  ieee754@1.2.1: {}
-
   lossless-json@4.3.0: {}
 
-  mainnet-js@2.7.19:
+  mainnet-js@3.1.7:
     dependencies:
-      '@bch-wc2/interfaces': 0.0.8(@bitauth/libauth@3.1.0-next.8)
       '@bitauth/libauth': 3.1.0-next.8
-      '@electrum-cash/network': 4.1.4
-      '@scure/bip39': 1.6.0
-      buffer: 6.0.3
+      '@electrum-cash/network': 4.2.2
     optionalDependencies:
       dotenv: 10.0.0
     transitivePeerDependencies:
