@@ -7,15 +7,19 @@
   "scripts": {
     "authUpdate": "tsx authUpdate.ts",
     "reservedSupply": "tsx reservedSupply.ts",
-    "issueSuppy": "tsx issueSuppy.ts"
+    "issueSupply": "tsx issueSupply.ts",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^24.7.1",
     "chaingraph-ts": "^0.2.4",
     "mainnet-js": "^3.1.7",
     "tsx": "^4.20.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.1",
+    "typescript": "^5.9.3"
   }
 }
