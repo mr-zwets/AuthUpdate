@@ -1,6 +1,6 @@
 # AuthUpdate
 
-**A handy Javascript program to update your BCMR metadata on-chain!**
+**A handy TypeScript program to update your BCMR metadata on-chain!**
 
 ## What it is
 
@@ -17,14 +17,14 @@ Verify the source of the program and that is doing what it claims to be doing!
 
 Before starting, it is expected that you hold the AuthHead in either a dedicated wallet used for no other purpose or a wallet with coin-control to prevent accidental burning.
 
-Clone this repo locally & have Node-js installed to run javascript programs.
-Install the npm dependency (mainnet-js) in the command line with
+Clone this repo locally & have Node.js installed to run the programs.
+Install the dependencies in the command line with
 
 ```bash
-npm install
+pnpm install
 ```
 
-Next, fill in the 5 variables at the top of the `authUpdate.js` file
+Next, fill in the 5 variables at the top of the `authUpdate.ts` file
 - the `tokenId` (or authbase)
 - either the `bcmrURL` or the `bcmrIpfsCID`
 - the `seedphase` 
@@ -35,7 +35,7 @@ For the `derivationPathAddress`: if your authHead is at address index 4 in your 
 
 Finally run the program from the command line with
 ```bash
-npm run authUpdate
+pnpm run authUpdate
 ```
 
 to broadcast the onchain metadata update.
@@ -52,10 +52,10 @@ OP_RETURN <'BCMR'> <hash> <uri>
 
 There is also a helper program to issue fungible token supply from an an authchain:
 ```bash
-npm run issueSuppy
+pnpm run issueSupply
 ```
 
 There is also a helper program to add fungible token supply to the reserved supply:
 ```bash
-npm run reservedSupply
+pnpm run reservedSupply
 ```
