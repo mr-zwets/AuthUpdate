@@ -113,9 +113,10 @@ async function updateMetadata(
       }) : new TokenSendRequest({
         cashaddr: walletAddress,
         category: tokenId,
+        // NFT property can not be undefined here, because token must be either fungible with amount or have nft property
         nft: {
-          commitment: authUtxo.token.nft?.commitment,
-          capability: authUtxo.token.nft?.capability
+          commitment: authUtxo.token.nft!.commitment,
+          capability: authUtxo.token.nft!.capability
         }
       });
       outputs.push(tokenChangeOutput)
