@@ -1,6 +1,6 @@
 import { graphql, ChaingraphClient } from "chaingraph-ts";
 
-const chaingraphUrl = "https://cg3.cashflow.dev/v1/graphql";
+const chaingraphUrl = "https://gql.chaingraph.pat.mn/v1/graphql";
 const chaingraphClient = new ChaingraphClient(chaingraphUrl);
 
 export async function queryAuthHead(tokenId:string){
